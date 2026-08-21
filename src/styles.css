@@ -197,7 +197,7 @@
   position: absolute;
   border-radius: 9999px;
   filter: blur(90px);
-  opacity: 0.5;
+  opacity: 0.34;
   animation: orb-drift 18s ease-in-out infinite;
 }
 
