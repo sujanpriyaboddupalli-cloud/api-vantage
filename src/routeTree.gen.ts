@@ -14,8 +14,12 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as DashboardAlertsRouteImport } from './routes/dashboard.alerts'
+import { Route as DashboardAnalyticsRouteImport } from './routes/dashboard.analytics'
 import { Route as DashboardIncidentsRouteImport } from './routes/dashboard.incidents'
 import { Route as DashboardMonitorsRouteImport } from './routes/dashboard.monitors'
+import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
+import { Route as DashboardStatusPagesRouteImport } from './routes/dashboard.status-pages'
 import { Route as DashboardIncidentsIndexRouteImport } from './routes/dashboard.incidents.index'
 import { Route as DashboardIncidentsIncidentIdRouteImport } from './routes/dashboard.incidents.$incidentId'
 
@@ -44,6 +48,16 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardAlertsRoute = DashboardAlertsRouteImport.update({
+  id: '/alerts',
+  path: '/alerts',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardAnalyticsRoute = DashboardAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardIncidentsRoute = DashboardIncidentsRouteImport.update({
   id: '/incidents',
   path: '/incidents',
@@ -52,6 +66,16 @@ const DashboardIncidentsRoute = DashboardIncidentsRouteImport.update({
 const DashboardMonitorsRoute = DashboardMonitorsRouteImport.update({
   id: '/monitors',
   path: '/monitors',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardStatusPagesRoute = DashboardStatusPagesRouteImport.update({
+  id: '/status-pages',
+  path: '/status-pages',
   getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardIncidentsIndexRoute = DashboardIncidentsIndexRouteImport.update({
@@ -71,8 +95,12 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/dashboard/alerts': typeof DashboardAlertsRoute
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/dashboard/incidents': typeof DashboardIncidentsRouteWithChildren
   '/dashboard/monitors': typeof DashboardMonitorsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/status-pages': typeof DashboardStatusPagesRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/incidents/$incidentId': typeof DashboardIncidentsIncidentIdRoute
   '/dashboard/incidents/': typeof DashboardIncidentsIndexRoute
@@ -81,7 +109,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/dashboard/alerts': typeof DashboardAlertsRoute
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/dashboard/monitors': typeof DashboardMonitorsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/status-pages': typeof DashboardStatusPagesRoute
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/incidents/$incidentId': typeof DashboardIncidentsIncidentIdRoute
   '/dashboard/incidents': typeof DashboardIncidentsIndexRoute
@@ -92,8 +124,12 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/dashboard/alerts': typeof DashboardAlertsRoute
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/dashboard/incidents': typeof DashboardIncidentsRouteWithChildren
   '/dashboard/monitors': typeof DashboardMonitorsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/status-pages': typeof DashboardStatusPagesRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/incidents/$incidentId': typeof DashboardIncidentsIncidentIdRoute
   '/dashboard/incidents/': typeof DashboardIncidentsIndexRoute
@@ -105,8 +141,12 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/signup'
+    | '/dashboard/alerts'
+    | '/dashboard/analytics'
     | '/dashboard/incidents'
     | '/dashboard/monitors'
+    | '/dashboard/settings'
+    | '/dashboard/status-pages'
     | '/dashboard/'
     | '/dashboard/incidents/$incidentId'
     | '/dashboard/incidents/'
@@ -115,7 +155,11 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/signup'
+    | '/dashboard/alerts'
+    | '/dashboard/analytics'
     | '/dashboard/monitors'
+    | '/dashboard/settings'
+    | '/dashboard/status-pages'
     | '/dashboard'
     | '/dashboard/incidents/$incidentId'
     | '/dashboard/incidents'
@@ -125,8 +169,12 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/signup'
+    | '/dashboard/alerts'
+    | '/dashboard/analytics'
     | '/dashboard/incidents'
     | '/dashboard/monitors'
+    | '/dashboard/settings'
+    | '/dashboard/status-pages'
     | '/dashboard/'
     | '/dashboard/incidents/$incidentId'
     | '/dashboard/incidents/'
@@ -176,6 +224,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/alerts': {
+      id: '/dashboard/alerts'
+      path: '/alerts'
+      fullPath: '/dashboard/alerts'
+      preLoaderRoute: typeof DashboardAlertsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/analytics': {
+      id: '/dashboard/analytics'
+      path: '/analytics'
+      fullPath: '/dashboard/analytics'
+      preLoaderRoute: typeof DashboardAnalyticsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/incidents': {
       id: '/dashboard/incidents'
       path: '/incidents'
@@ -188,6 +250,20 @@ declare module '@tanstack/react-router' {
       path: '/monitors'
       fullPath: '/dashboard/monitors'
       preLoaderRoute: typeof DashboardMonitorsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/settings': {
+      id: '/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/status-pages': {
+      id: '/dashboard/status-pages'
+      path: '/status-pages'
+      fullPath: '/dashboard/status-pages'
+      preLoaderRoute: typeof DashboardStatusPagesRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/dashboard/incidents/': {
@@ -221,14 +297,22 @@ const DashboardIncidentsRouteWithChildren =
   DashboardIncidentsRoute._addFileChildren(DashboardIncidentsRouteChildren)
 
 interface DashboardRouteChildren {
+  DashboardAlertsRoute: typeof DashboardAlertsRoute
+  DashboardAnalyticsRoute: typeof DashboardAnalyticsRoute
   DashboardIncidentsRoute: typeof DashboardIncidentsRouteWithChildren
   DashboardMonitorsRoute: typeof DashboardMonitorsRoute
+  DashboardSettingsRoute: typeof DashboardSettingsRoute
+  DashboardStatusPagesRoute: typeof DashboardStatusPagesRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardAlertsRoute: DashboardAlertsRoute,
+  DashboardAnalyticsRoute: DashboardAnalyticsRoute,
   DashboardIncidentsRoute: DashboardIncidentsRouteWithChildren,
   DashboardMonitorsRoute: DashboardMonitorsRoute,
+  DashboardSettingsRoute: DashboardSettingsRoute,
+  DashboardStatusPagesRoute: DashboardStatusPagesRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
 
