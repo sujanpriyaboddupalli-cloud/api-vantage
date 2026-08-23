@@ -7,7 +7,7 @@ const links = [
   { label: "Product", href: "#product" },
   { label: "Pricing", href: "#pricing" },
   { label: "Docs", href: "#docs" },
-  { label: "Login", href: "#login" },
+  { label: "Login", href: "/login" },
 ];
 
 export function SiteNav() {

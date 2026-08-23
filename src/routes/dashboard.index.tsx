@@ -93,7 +93,7 @@ function OverviewPage() {
           )
         )}
 
-        <div className="grid gap-6 xl:grid-cols-[1.6fr_1fr]">
+        <div className="grid items-start gap-6 xl:grid-cols-[1.6fr_1fr]">
           <section className="glass-panel rounded-2xl p-5">
             <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
               <div className="min-w-0">
