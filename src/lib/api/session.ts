@@ -2,6 +2,9 @@ import type { AuthUser } from "./types";
 
 const USER_KEY = "api-sentinel.user";
 
+/** Fired whenever the stored account changes, so hooks can re-read it. */
+export const SESSION_EVENT = "api-sentinel:session";
+
 /** The signed-in account, persisted so each email keeps its own workspace. */
 export function getStoredUser(): AuthUser | null {
   if (typeof window === "undefined") return null;
@@ -18,6 +21,7 @@ export function setStoredUser(user: AuthUser | null) {
   if (typeof window === "undefined") return;
   if (user) window.localStorage.setItem(USER_KEY, JSON.stringify(user));
   else window.localStorage.removeItem(USER_KEY);
+  window.dispatchEvent(new Event(SESSION_EVENT));
 }
 
 export function accountKey(email: string): string {
