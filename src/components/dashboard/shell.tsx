@@ -1,4 +1,5 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   Activity,
   AlertTriangle,
@@ -11,9 +12,11 @@ import {
   Settings,
   X,
 } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
+import { useAuthUser } from "@/hooks/use-auth";
 import { logout } from "@/lib/api/auth.service";
+import { initialsOf } from "@/lib/api/session";
 import { cn } from "@/lib/utils";
 
 const nav = [
