@@ -31,6 +31,14 @@ const nav = [
 
 function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { user } = useAuthUser();
+  const queryClient = useQueryClient();
+  const monitorCount = useMonitors().data?.length ?? 0;
+
+  const planLabel = user
+    ? `${user.plan[0]!.toUpperCase() + user.plan.slice(1)} · ${monitorCount} monitors`
+    : "Free plan";
+
 
   return (
     <div className="flex h-full flex-col gap-6 p-4">
@@ -68,23 +76,29 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
       <div className="mt-auto space-y-3">
         <div className="glass rounded-xl p-3">
           <p className="mono-label">Plan</p>
-          <p className="mt-1 text-sm font-medium">Pro · 8 monitors</p>
+          <p className="mt-1 text-sm font-medium">{planLabel}</p>
           <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
-            <div className="h-full w-2/3 rounded-full bg-duo" />
+            <div
+              className="h-full rounded-full bg-duo"
+              style={{ width: `${Math.min(100, (monitorCount / 10) * 100)}%` }}
+            />
           </div>
         </div>
         <div className="flex items-center gap-3 rounded-xl border border-border px-3 py-2">
           <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent/20 font-mono text-xs text-accent">
-            PN
+            {user ? initialsOf(user.name, user.email) : "··"}
           </span>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium">Priya Nair</p>
-            <p className="truncate text-xs text-muted-foreground">priya@acme.io</p>
+            <p className="truncate text-sm font-medium">{user?.name ?? "Signed out"}</p>
+            <p className="truncate text-xs text-muted-foreground">{user?.email ?? "—"}</p>
           </div>
           <Link
             to="/login"
             aria-label="Sign out"
-            onClick={() => logout()}
+            onClick={() => {
+              logout();
+              queryClient.clear();
+            }}
             className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
           >
             <LogOut className="h-4 w-4" />
