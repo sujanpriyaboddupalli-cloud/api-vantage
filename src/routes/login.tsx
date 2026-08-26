@@ -44,7 +44,7 @@ function LoginPage() {
     <AuthLayout
       eyebrow="Welcome back"
       title="Sign in to your workspace"
-      subtitle="Pick up where you left off — 8 monitors, 2 open incidents."
+      subtitle="Continue with Google or your email — every account gets its own workspace."
       footer={
         <>
           No account yet?{" "}

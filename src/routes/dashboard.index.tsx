@@ -37,7 +37,7 @@ function OverviewPage() {
   return (
     <DashboardShell
       title="Overview"
-      description="Acme Platform · all regions"
+      description={`${user?.org ?? "Workspace"} · all regions`}
       actions={
         <>
           <Button variant="glass" size="sm" className="hidden sm:inline-flex">
