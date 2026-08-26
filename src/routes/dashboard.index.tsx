@@ -7,6 +7,7 @@ import { DashboardShell } from "@/components/dashboard/shell";
 import { EmptyBlock, ErrorBlock, LoadingBlock } from "@/components/dashboard/states";
 import { Button } from "@/components/ui/button";
 import { useIncidents, useMonitors, useOverview } from "@/hooks/use-api";
+import { useAuthUser } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/dashboard/")({
   head: () => ({
@@ -30,6 +31,7 @@ function relative(iso: string) {
 }
 
 function OverviewPage() {
+  const { user } = useAuthUser();
   const overview = useOverview();
   const monitors = useMonitors();
   const incidents = useIncidents();
@@ -37,7 +39,7 @@ function OverviewPage() {
   return (
     <DashboardShell
       title="Overview"
-      description="Acme Platform · all regions"
+      description={`${user?.org ?? "Workspace"} · all regions`}
       actions={
         <>
           <Button variant="glass" size="sm" className="hidden sm:inline-flex">

@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 
+import { useMonitors } from "@/hooks/use-api";
 import { useAuthUser } from "@/hooks/use-auth";
 import { logout } from "@/lib/api/auth.service";
 import { initialsOf } from "@/lib/api/session";
@@ -121,6 +122,14 @@ export function DashboardShell({
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+  const { user, ready } = useAuthUser();
+
+  // No stored account → send them to sign in (each email gets its own workspace).
+  useEffect(() => {
+    if (ready && !user) navigate({ to: "/login" });
+  }, [ready, user, navigate]);
+
 
   return (
     <div className="grid-bg noise min-h-screen bg-background">

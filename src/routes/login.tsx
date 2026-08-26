@@ -3,6 +3,7 @@ import { Loader2 } from "lucide-react";
 import { useState } from "react";
 
 import { AuthLayout } from "@/components/auth/auth-layout";
+import { GoogleButton } from "@/components/auth/google-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,8 +27,8 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const navigate = useNavigate();
   const { mutateAsync, isPending, error } = useLogin();
-  const [email, setEmail] = useState("priya@acme.io");
-  const [password, setPassword] = useState("sentinel");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +44,7 @@ function LoginPage() {
     <AuthLayout
       eyebrow="Welcome back"
       title="Sign in to your workspace"
-      subtitle="Pick up where you left off — 8 monitors, 2 open incidents."
+      subtitle="Continue with Google or your email — every account gets its own workspace."
       footer={
         <>
           No account yet?{" "}
@@ -53,7 +54,9 @@ function LoginPage() {
         </>
       }
     >
-      <form className="space-y-4" onSubmit={onSubmit} noValidate>
+      <GoogleButton label="signin_with" />
+
+      <form className="mt-4 space-y-4" onSubmit={onSubmit} noValidate>
         <div className="space-y-2">
           <Label htmlFor="login-email">Work email</Label>
           <Input
