@@ -27,8 +27,8 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const navigate = useNavigate();
   const { mutateAsync, isPending, error } = useLogin();
-  const [email, setEmail] = useState("priya@acme.io");
-  const [password, setPassword] = useState("sentinel");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +54,9 @@ function LoginPage() {
         </>
       }
     >
-      <form className="space-y-4" onSubmit={onSubmit} noValidate>
+      <GoogleButton label="signin_with" />
+
+      <form className="mt-4 space-y-4" onSubmit={onSubmit} noValidate>
         <div className="space-y-2">
           <Label htmlFor="login-email">Work email</Label>
           <Input

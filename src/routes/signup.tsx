@@ -56,7 +56,9 @@ function SignupPage() {
         </>
       }
     >
-      <form className="space-y-4" onSubmit={onSubmit} noValidate>
+      <GoogleButton label="signup_with" />
+
+      <form className="mt-4 space-y-4" onSubmit={onSubmit} noValidate>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="su-name">Full name</Label>
