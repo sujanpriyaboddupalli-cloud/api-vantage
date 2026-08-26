@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 
+import { useMonitors } from "@/hooks/use-api";
 import { useAuthUser } from "@/hooks/use-auth";
 import { logout } from "@/lib/api/auth.service";
 import { initialsOf } from "@/lib/api/session";
