@@ -14,6 +14,7 @@ app.use(express.json());
 app.get("/api/health", (_req, res) => res.json({ ok: true, uptime: process.uptime() }));
 
 app.use("/api/auth", require("./routes/auth.routes"));
+app.use("/api/auth", require("./routes/auth.google"));
 app.use("/api/monitors", require("./routes/monitors.routes"));
 app.use("/api/incidents", require("./routes/incidents.routes"));
 app.use("/api/overview", require("./routes/overview.routes"));
