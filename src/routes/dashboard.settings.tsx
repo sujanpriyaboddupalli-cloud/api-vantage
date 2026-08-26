@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { useAuthUser } from "@/hooks/use-auth";
 import { API_BASE_URL, USE_MOCK_API } from "@/lib/api/client";
 
 export const Route = createFileRoute("/dashboard/settings")({
@@ -20,19 +21,21 @@ export const Route = createFileRoute("/dashboard/settings")({
 });
 
 function SettingsPage() {
+  const { user, ready } = useAuthUser();
+
   return (
-    <DashboardShell title="Settings" description="Workspace · Acme Platform">
+    <DashboardShell title="Settings" description={`Workspace · ${user?.org ?? "—"}`}>
       <div className="grid gap-6 lg:grid-cols-2">
         <section className="glass-panel rounded-2xl p-5">
           <h2 className="text-base font-semibold">Workspace</h2>
           <div className="mt-4 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="ws-name">Organization name</Label>
-              <Input id="ws-name" defaultValue="Acme Platform" />
+              {ready && <Input id="ws-name" defaultValue={user?.org ?? ""} />}
             </div>
             <div className="space-y-2">
               <Label htmlFor="ws-owner">Owner email</Label>
-              <Input id="ws-owner" defaultValue="priya@acme.io" type="email" />
+              {ready && <Input id="ws-owner" defaultValue={user?.email ?? ""} type="email" />}
             </div>
             <Button variant="hero" size="sm">Save changes</Button>
           </div>
