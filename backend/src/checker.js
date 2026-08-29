@@ -2,6 +2,8 @@ const cron = require("node-cron");
 const config = require("./config");
 const Monitor = require("./models/Monitor");
 const Incident = require("./models/Incident");
+const User = require("./models/User");
+const { sendDownAlert, sendRecoveredAlert } = require("./mailer");
 
 const DEGRADED_MS = 1200;
 
@@ -62,6 +64,9 @@ async function maybeOpenIncident(monitor, reason) {
     return;
   }
 
+  const owner = await User.findById(monitor.owner);
+  await sendDownAlert(owner, monitor, reason);
+
   await Incident.create({
     monitor: monitor._id,
     owner: monitor.owner,
@@ -92,6 +97,10 @@ async function autoResolve(monitor, responseTimeMs) {
     message: `Endpoint recovered — responded in ${responseTimeMs}ms. Auto-resolved.`,
   });
   await open.save();
+
+  const owner = await User.findById(monitor.owner);
+  const downMinutes = Math.max(1, Math.round((Date.now() - open.startedAt.getTime()) / 60000));
+  await sendRecoveredAlert(owner, monitor, responseTimeMs, downMinutes);
 }
 
 function isDue(monitor) {
