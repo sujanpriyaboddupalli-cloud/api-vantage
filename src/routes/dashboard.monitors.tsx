@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 import { StatusBadge } from "@/components/dashboard/primitives";
 import { DashboardShell } from "@/components/dashboard/shell";
+import { NewMonitorDialog } from "@/components/dashboard/new-monitor-dialog";
 import { EmptyBlock, ErrorBlock, LoadingBlock } from "@/components/dashboard/states";
 import { Sparkline } from "@/components/mock-charts";
 import { Button } from "@/components/ui/button";
@@ -48,7 +49,7 @@ function MonitorsPage() {
     <DashboardShell
       title="Monitors"
       description={`${data?.length ?? 0} endpoints across 6 regions`}
-      actions={<Button variant="hero" size="sm">New monitor</Button>}
+      actions={<NewMonitorDialog />}
     >
       <div className="glass-panel rounded-2xl">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border p-4">

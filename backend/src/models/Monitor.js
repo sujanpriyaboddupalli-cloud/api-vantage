@@ -11,6 +11,8 @@ const monitorSchema = new mongoose.Schema(
     expectedStatusCode: { type: Number, default: 200 },
     timeoutMs: { type: Number, default: 10000 },
     paused: { type: Boolean, default: false },
+    // where DOWN/RECOVERED alerts are sent (defaults to the owner's login email)
+    alertEmail: { type: String, default: "", lowercase: true, trim: true },
 
     // runtime state written by the scheduled checker
     status: { type: String, enum: ["up", "degraded", "down", "paused"], default: "up" },
@@ -38,6 +40,7 @@ monitorSchema.methods.toPublic = function toPublic() {
     method: this.method,
     region: this.region,
     intervalSeconds: this.intervalSeconds,
+    alertEmail: this.alertEmail,
     expectedStatusCode: this.expectedStatusCode,
     status: this.paused ? "paused" : this.status,
     responseTimeMs: this.responseTimeMs,

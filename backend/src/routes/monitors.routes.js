@@ -26,7 +26,7 @@ router.get("/:id", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const { name, url, method, region, intervalSeconds, expectedStatusCode, timeoutMs } =
+    const { name, url, method, region, intervalSeconds, expectedStatusCode, timeoutMs, alertEmail } =
       req.body || {};
     if (!name || !url) return res.status(400).json({ message: "Name and URL are required" });
 
@@ -39,6 +39,8 @@ router.post("/", async (req, res, next) => {
       intervalSeconds,
       expectedStatusCode,
       timeoutMs,
+      // alerts always go to the signed-in account unless they name another inbox
+      alertEmail: (alertEmail || req.user.email).toLowerCase(),
     });
     res.status(201).json(monitor.toPublic());
   } catch (err) {
@@ -55,6 +57,7 @@ const EDITABLE = [
   "expectedStatusCode",
   "timeoutMs",
   "paused",
+  "alertEmail",
 ];
 
 router.put("/:id", async (req, res, next) => {
