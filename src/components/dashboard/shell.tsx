@@ -16,6 +16,7 @@ import { useEffect, useState, type ReactNode } from "react";
 
 import { useMonitors } from "@/hooks/use-api";
 import { useAuthUser } from "@/hooks/use-auth";
+import { useStatusAlerts } from "@/hooks/use-status-alerts";
 import { logout } from "@/lib/api/auth.service";
 import { initialsOf } from "@/lib/api/session";
 import { cn } from "@/lib/utils";
@@ -124,6 +125,10 @@ export function DashboardShell({
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const { user, ready } = useAuthUser();
+  const { data: monitors } = useMonitors();
+
+  // Sound + toast whenever a monitored endpoint goes down or recovers.
+  useStatusAlerts(monitors);
 
   // No stored account → send them to sign in (each email gets its own workspace).
   useEffect(() => {
