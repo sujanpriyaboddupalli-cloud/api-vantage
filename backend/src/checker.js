@@ -65,7 +65,7 @@ async function maybeOpenIncident(monitor, reason) {
   }
 
   const owner = await User.findById(monitor.owner);
-  await sendDownAlert(owner, monitor, reason);
+  await sendDownAlert({ email: monitor.alertEmail || owner?.email }, monitor, reason);
 
   await Incident.create({
     monitor: monitor._id,
@@ -99,8 +99,9 @@ async function autoResolve(monitor, responseTimeMs) {
   await open.save();
 
   const owner = await User.findById(monitor.owner);
+  const recipient = { email: monitor.alertEmail || owner?.email };
   const downMinutes = Math.max(1, Math.round((Date.now() - open.startedAt.getTime()) / 60000));
-  await sendRecoveredAlert(owner, monitor, responseTimeMs, downMinutes);
+  await sendRecoveredAlert(recipient, monitor, responseTimeMs, downMinutes);
 }
 
 function isDue(monitor) {
