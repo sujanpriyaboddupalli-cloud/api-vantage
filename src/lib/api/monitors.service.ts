@@ -72,3 +72,37 @@ export async function createMonitor(input: NewMonitorInput): Promise<Monitor> {
   }
   return apiFetch<Monitor>("/monitors", { method: "POST", body: JSON.stringify(input) });
 }
+
+export async function updateMonitor(id: string, input: Partial<NewMonitorInput>): Promise<Monitor> {
+  if (USE_MOCK_API) {
+    const user = getStoredUser();
+    if (!user) throw new Error("Sign in required");
+    const ws = getWorkspace(user.email);
+    const target = ws.monitors.find((m) => m.id === id);
+    if (!target) throw new Error("Monitor not found");
+    Object.assign(target, {
+      name: input.name ?? target.name,
+      url: input.url ?? target.url,
+      method: input.method ?? target.method,
+      intervalSeconds: input.intervalSeconds ?? target.intervalSeconds,
+      alertEmail: input.alertEmail ?? target.alertEmail,
+    });
+    saveWorkspace(ws);
+    return delay(target, 350);
+  }
+  return apiFetch<Monitor>(`/monitors/${id}`, { method: "PUT", body: JSON.stringify(input) });
+}
+
+export async function deleteMonitor(id: string): Promise<void> {
+  if (USE_MOCK_API) {
+    const user = getStoredUser();
+    if (user) {
+      const ws = getWorkspace(user.email);
+      ws.monitors = ws.monitors.filter((m) => m.id !== id);
+      ws.incidents = ws.incidents.filter((i) => i.monitorId !== id);
+      saveWorkspace(ws);
+    }
+    return delay(undefined, 300);
+  }
+  return apiFetch<void>(`/monitors/${id}`, { method: "DELETE" });
+}

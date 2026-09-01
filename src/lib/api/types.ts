@@ -12,6 +12,7 @@ export interface Monitor {
   uptime30d: number;
   lastCheckedAt: string;
   latencySeries: number[];
+  alertEmail?: string;
 }
 
 export type IncidentSeverity = "critical" | "major" | "minor";
