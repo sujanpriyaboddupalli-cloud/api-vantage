@@ -36,3 +36,39 @@ export async function pauseMonitor(id: string): Promise<void> {
   }
   return apiFetch<void>(`/monitors/${id}/pause`, { method: "POST" });
 }
+
+export interface NewMonitorInput {
+  name: string;
+  url: string;
+  method: Monitor["method"];
+  intervalSeconds: number;
+  expectedStatusCode: number;
+  /** Inbox that receives DOWN / RECOVERED alerts — defaults to the signed-in account. */
+  alertEmail: string;
+}
+
+export async function createMonitor(input: NewMonitorInput): Promise<Monitor> {
+  if (USE_MOCK_API) {
+    const user = getStoredUser();
+    const monitor: Monitor = {
+      id: `mon_${Date.now().toString(36)}`,
+      name: input.name,
+      url: input.url,
+      method: input.method,
+      region: "us-east-1",
+      intervalSeconds: input.intervalSeconds,
+      status: "up",
+      responseTimeMs: 0,
+      uptime30d: 100,
+      lastCheckedAt: new Date().toISOString(),
+      latencySeries: [],
+    };
+    if (user) {
+      const ws = getWorkspace(user.email);
+      ws.monitors = [monitor, ...ws.monitors];
+      saveWorkspace(ws);
+    }
+    return delay(monitor, 400);
+  }
+  return apiFetch<Monitor>("/monitors", { method: "POST", body: JSON.stringify(input) });
+}
