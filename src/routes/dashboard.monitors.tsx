@@ -94,7 +94,21 @@ function MonitorsPage() {
     <DashboardShell
       title="Monitors"
       description={`${data?.length ?? 0} endpoints across 6 regions`}
-      actions={<NewMonitorDialog />}
+      actions={
+        <div className="flex items-center gap-2">
+          <Button
+            variant="glass"
+            size="sm"
+            onClick={() => refetch()}
+            disabled={isRefetching}
+            aria-label="Refresh monitors"
+          >
+            <RefreshCw className={`h-4 w-4 ${isRefetching ? "animate-spin" : ""}`} />
+            Refresh
+          </Button>
+          <NewMonitorDialog />
+        </div>
+      }
     >
       <div className="glass-panel rounded-2xl">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border p-4">
