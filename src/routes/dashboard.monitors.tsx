@@ -148,6 +148,7 @@ function MonitorsPage() {
                         {h}
                       </th>
                     ))}
+                    <th className="pb-3 text-right font-normal" aria-label="Actions" />
                   </tr>
                 </thead>
                 <tbody>
