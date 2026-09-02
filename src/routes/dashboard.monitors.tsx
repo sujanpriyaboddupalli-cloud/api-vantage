@@ -53,8 +53,32 @@ function ago(iso: string) {
 }
 
 function MonitorsPage() {
-  const { data, isLoading, isError, error, refetch } = useMonitors();
+  const { data, isLoading, isError, error, refetch, isRefetching } = useMonitors();
+  const qc = useQueryClient();
   const [q, setQ] = useState("");
+  const [editing, setEditing] = useState<Monitor | null>(null);
+  const [deleting, setDeleting] = useState<Monitor | null>(null);
+
+  const invalidate = () => {
+    qc.invalidateQueries({ queryKey: queryKeys.monitors });
+    qc.invalidateQueries({ queryKey: queryKeys.overview });
+  };
+
+  const pauseMutation = useMutation({
+    mutationFn: pauseMonitor,
+    onSuccess: invalidate,
+    onError: (err: Error) => toast.error("Could not update monitor", { description: err.message }),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteMonitor,
+    onSuccess: (_v, id) => {
+      invalidate();
+      toast.success("Monitor deleted", { description: `Removed ${id} and its incidents.` });
+      setDeleting(null);
+    },
+    onError: (err: Error) => toast.error("Could not delete monitor", { description: err.message }),
+  });
 
   const rows = useMemo(
     () =>
