@@ -176,6 +176,34 @@ function MonitorsPage() {
                       <td className="py-4 pr-4 font-mono text-xs text-muted-foreground">
                         {ago(m.lastCheckedAt)}
                       </td>
+                      <td className="py-4 text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" aria-label={`Actions for ${m.name}`}>
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="glass-panel">
+                            <DropdownMenuItem onSelect={() => setEditing(m)}>
+                              <Pencil className="h-4 w-4" /> Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onSelect={() => pauseMutation.mutate(m.id)}>
+                              {m.status === "paused" ? (
+                                <><Play className="h-4 w-4" /> Resume</>
+                              ) : (
+                                <><Pause className="h-4 w-4" /> Pause</>
+                              )}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              variant="destructive"
+                              onSelect={() => setDeleting(m)}
+                            >
+                              <Trash2 className="h-4 w-4" /> Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
