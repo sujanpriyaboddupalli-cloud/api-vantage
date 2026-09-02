@@ -1,15 +1,36 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Search } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { MoreHorizontal, Pencil, Pause, Play, RefreshCw, Search, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import { StatusBadge } from "@/components/dashboard/primitives";
 import { DashboardShell } from "@/components/dashboard/shell";
-import { NewMonitorDialog } from "@/components/dashboard/new-monitor-dialog";
+import { MonitorDialog, NewMonitorDialog } from "@/components/dashboard/new-monitor-dialog";
 import { EmptyBlock, ErrorBlock, LoadingBlock } from "@/components/dashboard/states";
 import { Sparkline } from "@/components/mock-charts";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { useMonitors } from "@/hooks/use-api";
+import { queryKeys, useMonitors } from "@/hooks/use-api";
+import { deleteMonitor, pauseMonitor } from "@/lib/api/monitors.service";
+import type { Monitor } from "@/lib/api/types";
 
 export const Route = createFileRoute("/dashboard/monitors")({
   head: () => ({
