@@ -1,15 +1,36 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Search } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { MoreHorizontal, Pencil, Pause, Play, RefreshCw, Search, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import { StatusBadge } from "@/components/dashboard/primitives";
 import { DashboardShell } from "@/components/dashboard/shell";
-import { NewMonitorDialog } from "@/components/dashboard/new-monitor-dialog";
+import { MonitorDialog, NewMonitorDialog } from "@/components/dashboard/new-monitor-dialog";
 import { EmptyBlock, ErrorBlock, LoadingBlock } from "@/components/dashboard/states";
 import { Sparkline } from "@/components/mock-charts";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { useMonitors } from "@/hooks/use-api";
+import { queryKeys, useMonitors } from "@/hooks/use-api";
+import { deleteMonitor, pauseMonitor } from "@/lib/api/monitors.service";
+import type { Monitor } from "@/lib/api/types";
 
 export const Route = createFileRoute("/dashboard/monitors")({
   head: () => ({
@@ -32,8 +53,32 @@ function ago(iso: string) {
 }
 
 function MonitorsPage() {
-  const { data, isLoading, isError, error, refetch } = useMonitors();
+  const { data, isLoading, isError, error, refetch, isRefetching } = useMonitors();
+  const qc = useQueryClient();
   const [q, setQ] = useState("");
+  const [editing, setEditing] = useState<Monitor | null>(null);
+  const [deleting, setDeleting] = useState<Monitor | null>(null);
+
+  const invalidate = () => {
+    qc.invalidateQueries({ queryKey: queryKeys.monitors });
+    qc.invalidateQueries({ queryKey: queryKeys.overview });
+  };
+
+  const pauseMutation = useMutation({
+    mutationFn: pauseMonitor,
+    onSuccess: invalidate,
+    onError: (err: Error) => toast.error("Could not update monitor", { description: err.message }),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteMonitor,
+    onSuccess: (_v, id) => {
+      invalidate();
+      toast.success("Monitor deleted", { description: `Removed ${id} and its incidents.` });
+      setDeleting(null);
+    },
+    onError: (err: Error) => toast.error("Could not delete monitor", { description: err.message }),
+  });
 
   const rows = useMemo(
     () =>
@@ -49,7 +94,21 @@ function MonitorsPage() {
     <DashboardShell
       title="Monitors"
       description={`${data?.length ?? 0} endpoints across 6 regions`}
-      actions={<NewMonitorDialog />}
+      actions={
+        <div className="flex items-center gap-2">
+          <Button
+            variant="glass"
+            size="sm"
+            onClick={() => refetch()}
+            disabled={isRefetching}
+            aria-label="Refresh monitors"
+          >
+            <RefreshCw className={`h-4 w-4 ${isRefetching ? "animate-spin" : ""}`} />
+            Refresh
+          </Button>
+          <NewMonitorDialog />
+        </div>
+      }
     >
       <div className="glass-panel rounded-2xl">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border p-4">
@@ -89,6 +148,7 @@ function MonitorsPage() {
                         {h}
                       </th>
                     ))}
+                    <th className="pb-3 text-right font-normal" aria-label="Actions" />
                   </tr>
                 </thead>
                 <tbody>
@@ -116,6 +176,34 @@ function MonitorsPage() {
                       <td className="py-4 pr-4 font-mono text-xs text-muted-foreground">
                         {ago(m.lastCheckedAt)}
                       </td>
+                      <td className="py-4 text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" aria-label={`Actions for ${m.name}`}>
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="glass-panel">
+                            <DropdownMenuItem onSelect={() => setEditing(m)}>
+                              <Pencil className="h-4 w-4" /> Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onSelect={() => pauseMutation.mutate(m.id)}>
+                              {m.status === "paused" ? (
+                                <><Play className="h-4 w-4" /> Resume</>
+                              ) : (
+                                <><Pause className="h-4 w-4" /> Pause</>
+                              )}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="text-destructive focus:text-destructive"
+                              onSelect={() => setDeleting(m)}
+                            >
+                              <Trash2 className="h-4 w-4" /> Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -124,6 +212,38 @@ function MonitorsPage() {
           )}
         </div>
       </div>
+
+      <MonitorDialog
+        monitor={editing ?? undefined}
+        open={editing !== null}
+        onOpenChange={(open) => {
+          if (!open) setEditing(null);
+        }}
+      />
+
+      <AlertDialog open={deleting !== null} onOpenChange={(open) => !open && setDeleting(null)}>
+        <AlertDialogContent className="glass-panel">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete “{deleting?.name}”?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This permanently removes the monitor and its incident history. Alerts for this
+              endpoint stop immediately.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                if (deleting) deleteMutation.mutate(deleting.id);
+              }}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? "Deleting…" : "Delete monitor"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </DashboardShell>
   );
 }
