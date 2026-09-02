@@ -21,10 +21,10 @@ import type { Monitor } from "@/lib/api/types";
 
 interface MonitorDialogProps {
   /** When provided the dialog edits this monitor instead of creating a new one. */
-  monitor?: Monitor;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  trigger?: React.ReactNode;
+  monitor?: Monitor | undefined;
+  open?: boolean | undefined;
+  onOpenChange?: ((open: boolean) => void) | undefined;
+  trigger?: React.ReactNode | undefined;
 }
 
 export function MonitorDialog({ monitor, open, onOpenChange, trigger }: MonitorDialogProps) {
