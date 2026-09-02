@@ -196,7 +196,7 @@ function MonitorsPage() {
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
-                              variant="destructive"
+                              className="text-destructive focus:text-destructive"
                               onSelect={() => setDeleting(m)}
                             >
                               <Trash2 className="h-4 w-4" /> Delete
